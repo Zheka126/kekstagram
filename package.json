@@ -5,25 +5,33 @@
   "description": "Личный проект «Кекстаграм» от HTML Academy",
   "repository": {
     "type": "git",
-    "url": "git@github.com:htmlacademy-javascript/481983-kekstagram.git"
+    "url": "git@github.com:svetlana-sayganova/kekstagram.git"
   },
   "author": "Svetlana Sayganova",
   "bugs": {
-    "url": "https://github.com/htmlacademy-javascript/kekstagram/issues"
+    "url": "https://github.com/svetlana-sayganova/kekstagram/issues"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.5.2",
     "eslint": "4.16.0",
-    "eslint-config-htmlacademy": "0.4.x"
+    "eslint-config-htmlacademy": "0.4.x",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9"
   },
   "license": "MIT",
   "dependencies": {},
   "scripts": {
     "test": "eslint js/",
-    "build": "babel js --out-dir dist/js --source-maps inline"
+    "build": "babel js --out-dir dist/js --source-maps inline",
+    "dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "start": "webpack-dev-server --mode development --open"
   },
   "engines": {
     "node": "8.9"

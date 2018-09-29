@@ -1,3 +1,5 @@
+import double from './example.js';
+
 const fb = (n) => {
   if (n === 1) {
     return 1;
@@ -14,4 +16,4 @@ const fb = (n) => {
   return iter(1, n);
 };
 
-fb(6);
+double(fb(6));
