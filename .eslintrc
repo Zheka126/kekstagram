@@ -1,7 +1,12 @@
 root: true
 
+parserOptions:
+  ecmaVersion: 6
+  sourceType: "module"
+
 env:
   browser: true
+  es6: true
 
 extends:
-  "htmlacademy/es5"
+  "htmlacademy/es6"

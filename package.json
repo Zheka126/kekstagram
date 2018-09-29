@@ -7,17 +7,23 @@
     "type": "git",
     "url": "git@github.com:htmlacademy-javascript/481983-kekstagram.git"
   },
+  "author": "Svetlana Sayganova",
   "bugs": {
-    "url": "https://github.com/htmlacademy-javascript/481983-kekstagram/issues"
+    "url": "https://github.com/htmlacademy-javascript/kekstagram/issues"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "eslint": "4.16.0",
     "eslint-config-htmlacademy": "0.4.x"
   },
   "license": "MIT",
   "dependencies": {},
   "scripts": {
-    "test": "eslint js/"
+    "test": "eslint js/",
+    "build": "babel js --out-dir dist/js --source-maps inline"
   },
   "engines": {
     "node": "8.9"
