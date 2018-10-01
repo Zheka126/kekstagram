@@ -42,7 +42,6 @@ const bigPhotoLikes = bigPhoto.querySelector(`.likes-count`);
 const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
 const bigPhotoCommentsLoad = bigPhoto.querySelector(`.social__comment-loadmore`);
 const bigPhotoCommentsBLock = bigPhoto.querySelector(`.social__comments`);
-const fragment = document.createDocumentFragment();
 
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max + 1 - min)) + min;
@@ -91,6 +90,12 @@ const createFhotoDataArray = (length) => new Array(length)
     .fill()
     .map(createFhotoData);
 
+const removeChildren = (parent) => {
+  while (parent.lastChild) {
+    parent.removeChild(parent.lastChild);
+  }
+};
+
 const createPhotoElement = (photoData) => {
   const photoElement = template.cloneNode(true);
   const photoElementSource = photoElement.querySelector(`.picture__img`);
@@ -105,9 +110,10 @@ const createPhotoElement = (photoData) => {
 };
 
 const renderPhotos = (photoDataArray) => {
+  const fragment = document.createDocumentFragment();
   photoDataArray.forEach((value) => fragment.appendChild(createPhotoElement(value)));
 
-  return container.appendChild(fragment);
+  container.appendChild(fragment);
 };
 
 const renderBigPhoto = (photoData) => {
@@ -122,7 +128,7 @@ const renderBigPhoto = (photoData) => {
   bigPhotoCommentsCount.classList.add(`visually-hidden`);
   bigPhotoCommentsLoad.classList.add(`visually-hidden`);
 
-  bigPhotoCommentsBLock.innerHTML = ``;
+  removeChildren(bigPhotoCommentsBLock);
 
   const commentsBlockElements = photoData.comments.map((value) =>
     `<li class="social__comment social__comment--text">
