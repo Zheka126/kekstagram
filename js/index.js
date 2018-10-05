@@ -30,10 +30,15 @@ const descriptions = [
   `Вот это тачка!`
 ];
 
+// DOM-элемент, в котором размещаются фотографии пользователей
 const container = document.querySelector(`.pictures`);
+
+// Шаблон для фотографии пользователя
 const template = document.querySelector(`#picture`)
     .content
     .querySelector(`.picture__link`);
+
+// Элементы для показа фотографии в полноэкранном режиме
 const bigPhoto = document.querySelector(`.big-picture`);
 const bigPhotoImage = bigPhoto.querySelector(`.big-picture__img`)
     .querySelector(`img`);
@@ -43,9 +48,24 @@ const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
 const bigPhotoCommentsLoad = bigPhoto.querySelector(`.social__comment-loadmore`);
 const bigPhotoCommentsBLock = bigPhoto.querySelector(`.social__comments`);
 
+/**
+ * Возвращает целое случайное число из отрезка [min, max]
+ *
+ * @param {number} min
+ * @param {number} max
+ * @return {number}
+ */
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max + 1 - min)) + min;
 
+
+/**
+ * Возвращает случайный элемент массива initialArray и при необходимости удаляет его из массива
+ *
+ * @param {Array}   initialArray
+ * @param {boolean} [needRemove=false] True - элемент удаляется из массива initialArray
+ * @return {*}
+ */
 const getRandomArrayElement = (initialArray, needRemove = false) => {
   const randomElementIndex = getRandomNumber(0, initialArray.length - 1);
   const randomElement = initialArray[randomElementIndex];
@@ -53,6 +73,15 @@ const getRandomArrayElement = (initialArray, needRemove = false) => {
   return needRemove ? initialArray.splice(randomElementIndex, 1) : randomElement;
 };
 
+/**
+ * Возвращает массив случайной длины из отрезка [min, max], составленный
+ * из уникальных случайных элементов массива initialArray
+ *
+ * @param {number} min Минимальная возможная длина возвращаемого массива
+ * @param {number} max Максимальная возможная длина возвращаемого массива
+ * @param {Array} initialArray Массив, из элементов которого формируется новый массив
+ * @return {Array}
+ */
 const getRandomArray = (min, max, initialArray) => {
   const copiedArray = initialArray.slice();
   const length = getRandomNumber(min, max);
@@ -69,6 +98,14 @@ const getRandomArray = (min, max, initialArray) => {
   return iter([], copiedArray);
 };
 
+/**
+ * Возвращает функцию, которая формирует случайное уникальное
+ * расположение фотографии
+ *
+ * @param {number} amount Количество фотографий
+ * @return {function} Функция, возвращающая строку с расположением фотографии
+ * вида photos/xx.jpg, где xx - случайное число из отрезка [1, amount]
+ */
 const createUniqueURL = (amount) => {
   const URLNames = new Array(amount)
       .fill()
@@ -79,16 +116,37 @@ const createUniqueURL = (amount) => {
 
 const getURL = createUniqueURL(photoAmount);
 
-const createFhotoData = () => ({
+/**
+ * Объект Photo, который описывает фотографию, размещенную пользователем
+ * @typedef Photo
+ * @type {Object}
+ * @property {string} url Расположение фотографии
+ * @property {number} likes Количество лайков, поставленных фотографии
+ * @property {Array.<string>} comments Массив комментариев
+ * @property {string} description Описание фотографии
+ */
+
+/**
+ * Возвращает объект Photo, описывающий фотографию
+ *
+ * @return {Photo}
+ */
+const createPhotoData = () => ({
   url: getURL(),
   likes: getRandomNumber(likesAmount.min, likesAmount.max),
   comments: getRandomArray(commentsAmount.min, commentsAmount.max, comments),
   description: getRandomArrayElement(descriptions)
 });
 
-const createFhotoDataArray = (length) => new Array(length)
+/**
+ * Возвращает массив заданной длины length объектов Photo
+ *
+ * @param {number} length
+ * @return {Array.<Photo>}
+ */
+const createPhotoDataArray = (length) => new Array(length)
     .fill()
-    .map(createFhotoData);
+    .map(createPhotoData);
 
 const removeChildren = (parent) => {
   while (parent.lastChild) {
@@ -96,6 +154,12 @@ const removeChildren = (parent) => {
   }
 };
 
+/**
+ * Возвращает DOM-элемент `Фотография`, созданный на основе объекта Photo
+ *
+ * @param {Photo} photoData
+ * @return {Node}
+ */
 const createPhotoElement = (photoData) => {
   const photoElement = template.cloneNode(true);
   const photoElementSource = photoElement.querySelector(`.picture__img`);
@@ -109,6 +173,12 @@ const createPhotoElement = (photoData) => {
   return photoElement;
 };
 
+/**
+ * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов Photo,
+ * на странице
+ *
+ * @param {Array.<Photo>} photoDataArray
+ */
 const renderPhotos = (photoDataArray) => {
   const fragment = document.createDocumentFragment();
   photoDataArray.forEach((value) => fragment.appendChild(createPhotoElement(value)));
@@ -116,6 +186,23 @@ const renderPhotos = (photoDataArray) => {
   container.appendChild(fragment);
 };
 
+/**
+ * Возвращает шаблон DOM-элемента для комментария comment
+ *
+ * @param {string} comment
+ * @return {string}
+ */
+const createCommentTemplate = (comment) =>
+  `<li class="social__comment social__comment--text">
+  <img class="social__picture" src="img/avatar-${getRandomNumber(1, 6)}.svg"
+  alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
+
+/**
+ * Отображает DOM-элемент `Фотография`, созданный на основе объетка photoData,
+ * в полноэкранном режиме
+ *
+ * @param {Photo} photoData
+ */
 const renderBigPhoto = (photoData) => {
   bigPhoto.classList.remove(`hidden`);
   bigPhotoCommentsCount.classList.add(`visually-hidden`);
@@ -130,16 +217,12 @@ const renderBigPhoto = (photoData) => {
 
   removeChildren(bigPhotoCommentsBLock);
 
-  const commentsBlockElements = photoData.comments.map((value) =>
-    `<li class="social__comment social__comment--text">
-    <img class="social__picture" src="img/avatar-${getRandomNumber(1, 6)}.svg"
-    alt="Аватар комментатора фотографии" width="35" height="35">${value}</li>`
-  );
+  const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
   bigPhotoCommentsBLock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 };
 
-const photos = createFhotoDataArray(photoAmount);
+const photos = createPhotoDataArray(photoAmount);
 
 renderPhotos(photos);
 
