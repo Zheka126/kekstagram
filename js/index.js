@@ -41,15 +41,22 @@ const template = document.querySelector(`#picture`)
     .querySelector(`.picture__link`);
 
 // Элементы для показа фотографии в полноэкранном режиме
+const bodyElement = document.querySelector(`body`);
 const bigPhoto = document.querySelector(`.big-picture`);
 const bigPhotoImage = bigPhoto.querySelector(`.big-picture__img`)
     .querySelector(`img`);
-const bigPhotoCloseButton = bigPhoto.querySelector(`.cancel`);
+const bigPhotoClose = bigPhoto.querySelector(`.cancel`);
 const bigPhotoCaption = bigPhoto.querySelector(`.social__caption`);
 const bigPhotoLikes = bigPhoto.querySelector(`.likes-count`);
 const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
 const bigPhotoCommentsLoad = bigPhoto.querySelector(`.social__comment-loadmore`);
 const bigPhotoCommentsBLock = bigPhoto.querySelector(`.social__comments`);
+
+// Элементы для загрузки изображения и его редактирования
+const uploadForm = document.querySelector(`.img-upload__form`);
+const uploadButton = uploadForm.querySelector(`#upload-file`);
+const editForm = uploadForm.querySelector(`.img-upload__overlay`);
+const editFormClose = uploadForm.querySelector(`#upload-cancel`);
 
 /**
  * Возвращает целое случайное число из отрезка [min, max]
@@ -60,7 +67,6 @@ const bigPhotoCommentsBLock = bigPhoto.querySelector(`.social__comments`);
  */
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max + 1 - min)) + min;
-
 
 /**
  * Возвращает случайный элемент массива initialArray и при необходимости удаляет его из массива
@@ -162,23 +168,24 @@ const removeChildren = (parent) => {
   }
 };
 
-
 /**
  * Открывает поп-ап с полноэкранной версией фотографии
  *
  */
-const openPopup = () => {
+const onPhotoElementClick = () => {
+  bodyElement.classList.add(`modal-open`);
   bigPhoto.classList.remove(`hidden`);
-  document.addEventListener(`keydown`, onPopupEscPress);
+  document.addEventListener(`keydown`, onBigPhotoEscPress);
 };
 
 /**
  * Закрывает поп-ап с полноэкранной версией фотографии
  *
  */
-const closePopup = () => {
+const onBigPhotoCloseClick = () => {
+  bodyElement.classList.remove(`modal-open`);
   bigPhoto.classList.add(`hidden`);
-  document.removeEventListener(`keydown`, onPopupEscPress);
+  document.removeEventListener(`keydown`, onBigPhotoEscPress);
 };
 
 /**
@@ -186,9 +193,9 @@ const closePopup = () => {
  *
  * @param {Event} evt
  */
-const onPopupEscPress = (evt) => {
+const onBigPhotoEscPress = (evt) => {
   if (evt.keyCode === escKeyCode) {
-    closePopup();
+    onBigPhotoCloseClick();
   }
 };
 
@@ -210,7 +217,7 @@ const createPhotoElement = (photoData) => {
 
   // При нажатии на DOM-элемент открывается его полноэкранная версия
   photoElement.addEventListener(`click`, () => {
-    openPopup();
+    onPhotoElementClick();
     fillBigPhoto(photoData);
   });
 
@@ -263,9 +270,48 @@ const fillBigPhoto = (photoData) => {
 
   bigPhotoCommentsBLock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 
-  bigPhotoCloseButton.addEventListener(`click`, closePopup);
+  bigPhotoClose.addEventListener(`click`, onBigPhotoCloseClick);
 };
 
 const photos = createPhotoDataArray(photoAmount);
 
 renderPhotos(photos);
+
+// Загрузка изображения
+
+/**
+ * Открывает форму редактирования фотографии
+ *
+ */
+const onUploadButtonClick = () => {
+  bodyElement.classList.add(`modal-open`);
+  editForm.classList.remove(`hidden`);
+  document.addEventListener(`keydown`, onEditFormEscPress);
+};
+
+/**
+ * Закрывает форму редактирования фотографии
+ *
+ */
+const onEditFormCloseClick = () => {
+  uploadButton.value = ``;
+  bodyElement.classList.remove(`modal-open`);
+  editForm.classList.add(`hidden`);
+  document.removeEventListener(`keydown`, onEditFormEscPress);
+};
+
+/**
+ * Закрывает форму редактирования фотографии при нажатии на ESC
+ *
+ * @param {Event} evt
+ */
+const onEditFormEscPress = (evt) => {
+  if (evt.keyCode === escKeyCode) {
+    onEditFormCloseClick();
+  }
+};
+
+uploadButton.addEventListener(`change`, () => {
+  onUploadButtonClick();
+  editFormClose.addEventListener(`click`, onEditFormCloseClick);
+});
