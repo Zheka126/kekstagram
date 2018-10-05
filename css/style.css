@@ -945,6 +945,9 @@ main {
 .social__picture {
   display: block;
   margin-right: 15px;
+
+  -ms-flex-negative: 0;
+    flex-shrink: 0;
 }
 
 .social__caption {

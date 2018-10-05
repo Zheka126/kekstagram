@@ -30,6 +30,8 @@ const descriptions = [
   `Вот это тачка!`
 ];
 
+const escKeyCode = 27;
+
 // DOM-элемент, в котором размещаются фотографии пользователей
 const container = document.querySelector(`.pictures`);
 
@@ -42,6 +44,7 @@ const template = document.querySelector(`#picture`)
 const bigPhoto = document.querySelector(`.big-picture`);
 const bigPhotoImage = bigPhoto.querySelector(`.big-picture__img`)
     .querySelector(`img`);
+const bigPhotoCloseButton = bigPhoto.querySelector(`.cancel`);
 const bigPhotoCaption = bigPhoto.querySelector(`.social__caption`);
 const bigPhotoLikes = bigPhoto.querySelector(`.likes-count`);
 const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
@@ -148,9 +151,44 @@ const createPhotoDataArray = (length) => new Array(length)
     .fill()
     .map(createPhotoData);
 
+/**
+ * Удаляет дочерние DOM-элементы у элемента parent
+ *
+ * @param {Node} parent
+ */
 const removeChildren = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
+  }
+};
+
+
+/**
+ * Открывает поп-ап с полноэкранной версией фотографии
+ *
+ */
+const openPopup = () => {
+  bigPhoto.classList.remove(`hidden`);
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+/**
+ * Закрывает поп-ап с полноэкранной версией фотографии
+ *
+ */
+const closePopup = () => {
+  bigPhoto.classList.add(`hidden`);
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
+/**
+ * Закрывает поп-ап с полноэкранной версией фотографии при нажатии на ESC
+ *
+ * @param {Event} evt
+ */
+const onPopupEscPress = (evt) => {
+  if (evt.keyCode === escKeyCode) {
+    closePopup();
   }
 };
 
@@ -169,6 +207,12 @@ const createPhotoElement = (photoData) => {
   photoElementSource.src = photoData.url;
   photoElementComments.textContent = photoData.comments.length;
   photoElementLikes.textContent = photoData.likes;
+
+  // При нажатии на DOM-элемент открывается его полноэкранная версия
+  photoElement.addEventListener(`click`, () => {
+    openPopup();
+    fillBigPhoto(photoData);
+  });
 
   return photoElement;
 };
@@ -198,13 +242,11 @@ const createCommentTemplate = (comment) =>
   alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
 
 /**
- * Отображает DOM-элемент `Фотография`, созданный на основе объетка photoData,
- * в полноэкранном режиме
+ * Наполняет DOM-элемент `Фотография в полноэкранном режиме` данными объекта photoData
  *
  * @param {Photo} photoData
  */
-const renderBigPhoto = (photoData) => {
-  bigPhoto.classList.remove(`hidden`);
+const fillBigPhoto = (photoData) => {
   bigPhotoCommentsCount.classList.add(`visually-hidden`);
   bigPhotoCommentsLoad.classList.add(`visually-hidden`);
 
@@ -220,10 +262,10 @@ const renderBigPhoto = (photoData) => {
   const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
   bigPhotoCommentsBLock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
+
+  bigPhotoCloseButton.addEventListener(`click`, closePopup);
 };
 
 const photos = createPhotoDataArray(photoAmount);
 
 renderPhotos(photos);
-
-renderBigPhoto(photos[0]);
