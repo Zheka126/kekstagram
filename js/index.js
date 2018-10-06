@@ -175,6 +175,7 @@ const removeChildren = (parent) => {
 const onPhotoElementClick = () => {
   bodyElement.classList.add(`modal-open`);
   bigPhoto.classList.remove(`hidden`);
+  bigPhotoClose.addEventListener(`click`, onBigPhotoCloseClick);
   document.addEventListener(`keydown`, onBigPhotoEscPress);
 };
 
@@ -185,6 +186,7 @@ const onPhotoElementClick = () => {
 const onBigPhotoCloseClick = () => {
   bodyElement.classList.remove(`modal-open`);
   bigPhoto.classList.add(`hidden`);
+  bigPhotoClose.removeEventListener(`click`, onBigPhotoCloseClick);
   document.removeEventListener(`keydown`, onBigPhotoEscPress);
 };
 
@@ -215,7 +217,7 @@ const createPhotoElement = (photoData) => {
   photoElementComments.textContent = photoData.comments.length;
   photoElementLikes.textContent = photoData.likes;
 
-  // При нажатии на DOM-элемент открывается его полноэкранная версия
+  // При нажатии на DOM-элемент `Фотография` открывается его полноэкранная версия
   photoElement.addEventListener(`click`, () => {
     onPhotoElementClick();
     fillBigPhoto(photoData);
@@ -269,15 +271,13 @@ const fillBigPhoto = (photoData) => {
   const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
   bigPhotoCommentsBLock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
-
-  bigPhotoClose.addEventListener(`click`, onBigPhotoCloseClick);
 };
 
 const photos = createPhotoDataArray(photoAmount);
 
 renderPhotos(photos);
 
-// Загрузка изображения
+// Загрузка изображения и формы редактирования
 
 /**
  * Открывает форму редактирования фотографии
@@ -286,6 +286,7 @@ renderPhotos(photos);
 const onUploadButtonClick = () => {
   bodyElement.classList.add(`modal-open`);
   editForm.classList.remove(`hidden`);
+  editFormClose.addEventListener(`click`, onEditFormCloseClick);
   document.addEventListener(`keydown`, onEditFormEscPress);
 };
 
@@ -297,6 +298,7 @@ const onEditFormCloseClick = () => {
   uploadButton.value = ``;
   bodyElement.classList.remove(`modal-open`);
   editForm.classList.add(`hidden`);
+  editFormClose.removeEventListener(`click`, onEditFormCloseClick);
   document.removeEventListener(`keydown`, onEditFormEscPress);
 };
 
@@ -311,7 +313,4 @@ const onEditFormEscPress = (evt) => {
   }
 };
 
-uploadButton.addEventListener(`change`, () => {
-  onUploadButtonClick();
-  editFormClose.addEventListener(`click`, onEditFormCloseClick);
-});
+uploadButton.addEventListener(`change`, onUploadButtonClick);
