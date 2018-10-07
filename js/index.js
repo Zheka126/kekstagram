@@ -2,7 +2,7 @@
 
 const photoAmount = 25;
 
-const likesAmount = {
+const LikesAmount = {
   min: 15,
   max: 200
 };
@@ -16,7 +16,7 @@ const comments = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
 
-const commentsAmount = {
+const CommentsAmount = {
   min: 1,
   max: 2
 };
@@ -50,13 +50,26 @@ const bigPhotoCaption = bigPhoto.querySelector(`.social__caption`);
 const bigPhotoLikes = bigPhoto.querySelector(`.likes-count`);
 const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
 const bigPhotoCommentsLoad = bigPhoto.querySelector(`.social__comment-loadmore`);
-const bigPhotoCommentsBLock = bigPhoto.querySelector(`.social__comments`);
+const bigPhotoCommentsBlock = bigPhoto.querySelector(`.social__comments`);
 
 // Элементы для загрузки изображения и его редактирования
 const uploadForm = document.querySelector(`.img-upload__form`);
 const uploadButton = uploadForm.querySelector(`#upload-file`);
 const editForm = uploadForm.querySelector(`.img-upload__overlay`);
 const editFormClose = uploadForm.querySelector(`#upload-cancel`);
+
+// Элементы для масштабирования изображения
+const resizeMinus = uploadForm.querySelector(`.resize__control--minus`);
+const resizePlus = uploadForm.querySelector(`.resize__control--plus`);
+const resizeValue = uploadForm.querySelector(`.resize__control--value`);
+const PictureSize = {
+  min: 25,
+  max: 100,
+  default: 100,
+  current: 100,
+  step: 25
+};
+const picturePreview = uploadForm.querySelector(`.img-upload__preview`);
 
 /**
  * Возвращает целое случайное число из отрезка [min, max]
@@ -142,8 +155,8 @@ const getURL = createUniqueURL(photoAmount);
  */
 const createPhotoData = () => ({
   url: getURL(),
-  likes: getRandomNumber(likesAmount.min, likesAmount.max),
-  comments: getRandomArray(commentsAmount.min, commentsAmount.max, comments),
+  likes: getRandomNumber(LikesAmount.min, LikesAmount.max),
+  comments: getRandomArray(CommentsAmount.min, CommentsAmount.max, comments),
   description: getRandomArrayElement(descriptions)
 });
 
@@ -266,11 +279,11 @@ const fillBigPhoto = (photoData) => {
   bigPhotoCommentsCount.classList.add(`visually-hidden`);
   bigPhotoCommentsLoad.classList.add(`visually-hidden`);
 
-  removeChildren(bigPhotoCommentsBLock);
+  removeChildren(bigPhotoCommentsBlock);
 
   const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
-  bigPhotoCommentsBLock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
+  bigPhotoCommentsBlock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 };
 
 const photos = createPhotoDataArray(photoAmount);
@@ -280,7 +293,8 @@ renderPhotos(photos);
 // Загрузка изображения и формы редактирования
 
 /**
- * Открывает форму редактирования фотографии
+ * Открывает форму редактирования фотографии,
+ * добавляет обработчики событий
  *
  */
 const onUploadButtonClick = () => {
@@ -288,10 +302,12 @@ const onUploadButtonClick = () => {
   editForm.classList.remove(`hidden`);
   editFormClose.addEventListener(`click`, onEditFormCloseClick);
   document.addEventListener(`keydown`, onEditFormEscPress);
+  activateResizePicture();
 };
 
 /**
- * Закрывает форму редактирования фотографии
+ * Закрывает форму редактирования фотографии,
+ * удаляет обработчики событий с недоступных более элементов
  *
  */
 const onEditFormCloseClick = () => {
@@ -300,6 +316,7 @@ const onEditFormCloseClick = () => {
   editForm.classList.add(`hidden`);
   editFormClose.removeEventListener(`click`, onEditFormCloseClick);
   document.removeEventListener(`keydown`, onEditFormEscPress);
+  deactivateResizePicture();
 };
 
 /**
@@ -314,3 +331,62 @@ const onEditFormEscPress = (evt) => {
 };
 
 uploadButton.addEventListener(`change`, onUploadButtonClick);
+
+// Масштабирование изображения
+
+/**
+ * Записывает новый масштаб изображения size в поле resizeValue
+ * м масштабирует изображение picturePreview на величину size
+ * через задание ему стиля `transform: scale(size / 100)`
+ *
+ * @param {number} size
+ */
+const setPictureSize = (size) => {
+  resizeValue.value = `${size}%`;
+  picturePreview.style = `transform: scale(${size / 100})`;
+  PictureSize.current = size;
+};
+
+/**
+ * Уменьшает масштаб изображения на величину PictureSize.step
+ * и записывает новый масштаб изображения в поле resizeValue
+ *
+ */
+const onResizeMinusClick = () => {
+  if (PictureSize.current > PictureSize.min) {
+    const newSize = PictureSize.current - PictureSize.step;
+    setPictureSize(newSize);
+  }
+};
+
+/**
+ * Увеличивает масштаб изображения на величину PictureSize.step
+ * и записывает новый масштаб изображения в поле resizeValue
+ *
+ */
+const onResizePlusClick = () => {
+  if (PictureSize.current < PictureSize.max) {
+    const newSize = PictureSize.current + PictureSize.step;
+    setPictureSize(newSize);
+  }
+};
+
+/**
+ * Устанавливает масштаб PictureSize.default загруженному изображению
+ * и добавляет обработчики на кнопки масштабирования изображения
+ *
+ */
+const activateResizePicture = () => {
+  setPictureSize(PictureSize.default);
+  resizeMinus.addEventListener(`click`, onResizeMinusClick);
+  resizePlus.addEventListener(`click`, onResizePlusClick);
+};
+
+/**
+ * Удаляет обработчики с кнопок масштабирования изображения
+ *
+ */
+const deactivateResizePicture = () => {
+  resizeMinus.removeEventListener(`click`, onResizeMinusClick);
+  resizePlus.removeEventListener(`click`, onResizePlusClick);
+};
