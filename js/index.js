@@ -1,4 +1,4 @@
-// import double from './example.js';
+// import double from `./example.js`;
 
 const photoAmount = 25;
 
@@ -439,19 +439,25 @@ const effects = {
 };
 
 /**
- * Скрывает ползунок scale
+ * Скрывает ползунок scale и удаляет обработчик событий
+ * с пина ползунка
  *
  */
 const hideScalePanel = () => {
   scalePanel.classList.add(`hidden`);
+  scalePin.removeEventListener(`mousedown`, onScalePinMouseDown);
 };
 
 /**
- * Показывает ползунок scale
+ * Показывает ползунок scale и добавлляет обработчик событий
+ * для пина ползунка
  *
  */
 const showScalePanel = () => {
-  scalePanel.classList.remove(`hidden`);
+  if (scalePanel.classList.contains(`hidden`)) {
+    scalePanel.classList.remove(`hidden`);
+    scalePin.addEventListener(`mousedown`, onScalePinMouseDown);
+  }
 };
 
 /**
@@ -506,7 +512,8 @@ const setPinPosition = (value) => {
 
 /**
  * В зависимости от выбранного эффекта скрывает или показывает
- * ползунок scalePanel; устанавливает пин ползунка в максимальное
+ * ползунок scalePanel; передает эффект и функцию применения эффекта
+ * для пина ползунка; устанавливает пин ползунка в максимальное
  * положение; устанавливает класс и стиль на загруженное изображение
  *
  * @param {Event} evt
@@ -517,6 +524,7 @@ const onEffectToggleClick = (evt) => {
     hideScalePanel();
   } else {
     showScalePanel();
+    setPinAction(selectedEffect.value, setPictureEffect);
   }
   setPinPosition(effectMaxLevel);
   setPictureClass(selectedEffect.value);
@@ -545,4 +553,70 @@ const activateEffectsPicture = () => {
 const deactivateEffectsPicture = () => {
   Array.from(effectToggles).forEach((effectToggle) =>
     effectToggle.removeEventListener(`click`, onEffectToggleClick));
+};
+
+// Перемещение ползунка
+const scaleLine = scalePanel.querySelector(`.scale__line`);
+let pin;
+
+/**
+ * Присваивает переменной pin значения примененного эффекта
+ * и функции, используюшейся при перемещении пина
+ *
+ * @param {string} effect
+ * @param {function} action
+ */
+const setPinAction = (effect, action) => {
+  pin = {
+    effect,
+    action
+  };
+};
+
+/**
+ * Перемещает пин позунка и в зависимости от его положения
+ * применяет эффекты к изображению
+ *
+ * @param {Event} evt
+ */
+const onScalePinMouseDown = (evt) => {
+  evt.preventDefault();
+  const scaleWidth = scaleLine.offsetWidth;
+
+  let startCoord = evt.clientX;
+
+  scalePin.style.cursor = `none`;
+  document.documentElement.style.cursor = `none`;
+
+  const onMouseMove = (moveEvt) => {
+    moveEvt.preventDefault();
+
+    const shift = startCoord - moveEvt.clientX;
+    startCoord = moveEvt.clientX;
+
+    let currentCoord = scalePin.offsetLeft - shift;
+
+    if (currentCoord < 0) {
+      currentCoord = 0;
+    } else if (currentCoord > scaleWidth) {
+      currentCoord = scaleWidth;
+    }
+
+    const currentValue = currentCoord * 100 / scaleWidth;
+    setPinPosition(currentValue);
+    pin.action(pin.effect);
+  };
+
+  const onMouseUp = (upEvt) => {
+    upEvt.preventDefault();
+
+    scalePin.style.cursor = `move`;
+    document.documentElement.style.cursor = `auto`;
+
+    document.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mouseup`, onMouseUp);
+  };
+
+  document.addEventListener(`mousemove`, onMouseMove);
+  document.addEventListener(`mouseup`, onMouseUp);
 };
