@@ -1,34 +1,5 @@
-// import double from `./example.js`;
-
-const photoAmount = 25;
-
-const LikesAmount = {
-  min: 15,
-  max: 200
-};
-
-const comments = [
-  `Всё отлично!`,
-  `В целом всё неплохо. Но не всё.`,
-  `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
-  `Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.`,
-  `Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.`,
-  `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
-];
-
-const CommentsAmount = {
-  min: 1,
-  max: 2
-};
-
-const descriptions = [
-  `Тестим новую камеру!`,
-  `Затусили с друзьями на море`,
-  `Как же круто тут кормят`,
-  `Отдыхаем...`,
-  `Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......`,
-  `Вот это тачка!`
-];
+import * as data from './data.js';
+import * as util from './util.js';
 
 const escKeyCode = 27;
 
@@ -70,116 +41,6 @@ const PictureSize = {
   step: 25
 };
 const picturePreview = uploadForm.querySelector(`.img-upload__preview`);
-
-/**
- * Возвращает целое случайное число из отрезка [min, max]
- *
- * @param {number} min
- * @param {number} max
- * @return {number}
- */
-const getRandomNumber = (min, max) =>
-  Math.floor(Math.random() * (max + 1 - min)) + min;
-
-/**
- * Возвращает случайный элемент массива initialArray и при необходимости удаляет его из массива
- *
- * @param {Array}   initialArray
- * @param {boolean} [needRemove=false] True - элемент удаляется из массива initialArray
- * @return {*}
- */
-const getRandomArrayElement = (initialArray, needRemove = false) => {
-  const randomElementIndex = getRandomNumber(0, initialArray.length - 1);
-  const randomElement = initialArray[randomElementIndex];
-
-  return needRemove ? initialArray.splice(randomElementIndex, 1) : randomElement;
-};
-
-/**
- * Возвращает массив случайной длины из отрезка [min, max], составленный
- * из уникальных случайных элементов массива initialArray
- *
- * @param {number} min Минимальная возможная длина возвращаемого массива
- * @param {number} max Максимальная возможная длина возвращаемого массива
- * @param {Array} initialArray Массив, из элементов которого формируется новый массив
- * @return {Array}
- */
-const getRandomArray = (min, max, initialArray) => {
-  const copiedArray = initialArray.slice();
-  const length = getRandomNumber(min, max);
-
-  const iter = (acc, array) => {
-    if (acc.length === length) {
-      return acc;
-    }
-
-    const randomElement = getRandomArrayElement(array, true);
-    return iter([...acc, randomElement], array);
-  };
-
-  return iter([], copiedArray);
-};
-
-/**
- * Возвращает функцию, которая формирует случайное уникальное
- * расположение фотографии
- *
- * @param {number} amount Количество фотографий
- * @return {function} Функция, возвращающая строку с расположением фотографии
- * вида photos/xx.jpg, где xx - случайное число из отрезка [1, amount]
- */
-const createUniqueURL = (amount) => {
-  const URLNames = new Array(amount)
-      .fill()
-      .map((value, index) => index + 1);
-
-  return () => `photos/${getRandomArrayElement(URLNames, true)}.jpg`;
-};
-
-const getURL = createUniqueURL(photoAmount);
-
-/**
- * Объект Photo, который описывает фотографию, размещенную пользователем
- * @typedef Photo
- * @type {Object}
- * @property {string} url Расположение фотографии
- * @property {number} likes Количество лайков, поставленных фотографии
- * @property {Array.<string>} comments Массив комментариев
- * @property {string} description Описание фотографии
- */
-
-/**
- * Возвращает объект Photo, описывающий фотографию
- *
- * @return {Photo}
- */
-const createPhotoData = () => ({
-  url: getURL(),
-  likes: getRandomNumber(LikesAmount.min, LikesAmount.max),
-  comments: getRandomArray(CommentsAmount.min, CommentsAmount.max, comments),
-  description: getRandomArrayElement(descriptions)
-});
-
-/**
- * Возвращает массив заданной длины length объектов Photo
- *
- * @param {number} length
- * @return {Array.<Photo>}
- */
-const createPhotoDataArray = (length) => new Array(length)
-    .fill()
-    .map(createPhotoData);
-
-/**
- * Удаляет дочерние DOM-элементы у элемента parent
- *
- * @param {Node} parent
- */
-const removeChildren = (parent) => {
-  while (parent.lastChild) {
-    parent.removeChild(parent.lastChild);
-  }
-};
 
 /**
  * Открывает поп-ап с полноэкранной версией фотографии
@@ -260,7 +121,7 @@ const renderPhotos = (photoDataArray) => {
  */
 const createCommentTemplate = (comment) =>
   `<li class="social__comment social__comment--text">
-  <img class="social__picture" src="img/avatar-${getRandomNumber(1, 6)}.svg"
+  <img class="social__picture" src="img/avatar-${util.getRandomNumber(1, 6)}.svg"
   alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
 
 /**
@@ -279,14 +140,14 @@ const fillBigPhoto = (photoData) => {
   bigPhotoCommentsCount.classList.add(`visually-hidden`);
   bigPhotoCommentsLoad.classList.add(`visually-hidden`);
 
-  removeChildren(bigPhotoCommentsBlock);
+  util.removeChildren(bigPhotoCommentsBlock);
 
   const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
   bigPhotoCommentsBlock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 };
 
-const photos = createPhotoDataArray(photoAmount);
+const photos = data.init();
 
 renderPhotos(photos);
 

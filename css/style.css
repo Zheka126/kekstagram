@@ -668,6 +668,7 @@ main {
   position: absolute;
   top: 50%;
   left: 20%;
+  z-index: 5;
 
   width: 18px;
   height: 18px;
@@ -985,7 +986,7 @@ main {
   background-image: url("../img/sprite.svg");
   background-size: 100%;
 
-  background-position: 0 -150px;
+  background-position: 0 -280px;
   opacity: 0.5;
 }
 
@@ -996,7 +997,7 @@ main {
 
 .likes-count:active::before {
   opacity: 1;
-  background-position: 0 -120px;
+  background-position: 0 -255px;
 }
 
 .social__comments {
