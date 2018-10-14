@@ -80,4 +80,9 @@ const createPhotoDataArray = (length) => new Array(length)
     .fill()
     .map(createPhotoData);
 
-export const init = () => createPhotoDataArray(PHOTO_AMOUNT);
+export /**
+ * Создает массив объектов Photo длины PHOTO_AMOUNT
+ *
+ *  @return {Array.<Photo>}
+ */
+const initialize = () => createPhotoDataArray(PHOTO_AMOUNT);
