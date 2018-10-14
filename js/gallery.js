@@ -1,27 +1,11 @@
 import * as data from './data.js';
 import * as util from './util.js';
-
-const escKeyCode = 27;
+import * as photo from './photo.js';
 
 // DOM-элемент, в котором размещаются фотографии пользователей
 const container = document.querySelector(`.pictures`);
 
-// Шаблон для фотографии пользователя
-const template = document.querySelector(`#picture`)
-    .content
-    .querySelector(`.picture__link`);
-
-// Элементы для показа фотографии в полноэкранном режиме
 const bodyElement = document.querySelector(`body`);
-const bigPhoto = document.querySelector(`.big-picture`);
-const bigPhotoImage = bigPhoto.querySelector(`.big-picture__img`)
-    .querySelector(`img`);
-const bigPhotoClose = bigPhoto.querySelector(`.cancel`);
-const bigPhotoCaption = bigPhoto.querySelector(`.social__caption`);
-const bigPhotoLikes = bigPhoto.querySelector(`.likes-count`);
-const bigPhotoCommentsCount = bigPhoto.querySelector(`.social__comment-count`);
-const bigPhotoCommentsLoad = bigPhoto.querySelector(`.social__comment-loadmore`);
-const bigPhotoCommentsBlock = bigPhoto.querySelector(`.social__comments`);
 
 // Элементы для загрузки изображения и его редактирования
 const uploadForm = document.querySelector(`.img-upload__form`);
@@ -40,65 +24,8 @@ const PictureSize = {
   current: 100,
   step: 25
 };
+
 const picturePreview = uploadForm.querySelector(`.img-upload__preview`);
-
-/**
- * Открывает поп-ап с полноэкранной версией фотографии
- *
- */
-const onPhotoElementClick = () => {
-  bodyElement.classList.add(`modal-open`);
-  bigPhoto.classList.remove(`hidden`);
-  bigPhotoClose.addEventListener(`click`, onBigPhotoCloseClick);
-  document.addEventListener(`keydown`, onBigPhotoEscPress);
-};
-
-/**
- * Закрывает поп-ап с полноэкранной версией фотографии
- *
- */
-const onBigPhotoCloseClick = () => {
-  bodyElement.classList.remove(`modal-open`);
-  bigPhoto.classList.add(`hidden`);
-  bigPhotoClose.removeEventListener(`click`, onBigPhotoCloseClick);
-  document.removeEventListener(`keydown`, onBigPhotoEscPress);
-};
-
-/**
- * Закрывает поп-ап с полноэкранной версией фотографии при нажатии на ESC
- *
- * @param {Event} evt
- */
-const onBigPhotoEscPress = (evt) => {
-  if (evt.keyCode === escKeyCode) {
-    onBigPhotoCloseClick();
-  }
-};
-
-/**
- * Возвращает DOM-элемент `Фотография`, созданный на основе объекта Photo
- *
- * @param {Photo} photoData
- * @return {Node}
- */
-const createPhotoElement = (photoData) => {
-  const photoElement = template.cloneNode(true);
-  const photoElementSource = photoElement.querySelector(`.picture__img`);
-  const photoElementComments = photoElement.querySelector(`.picture__stat--comments`);
-  const photoElementLikes = photoElement.querySelector(`.picture__stat--likes`);
-
-  photoElementSource.src = photoData.url;
-  photoElementComments.textContent = photoData.comments.length;
-  photoElementLikes.textContent = photoData.likes;
-
-  // При нажатии на DOM-элемент `Фотография` открывается его полноэкранная версия
-  photoElement.addEventListener(`click`, () => {
-    onPhotoElementClick();
-    fillBigPhoto(photoData);
-  });
-
-  return photoElement;
-};
 
 /**
  * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов Photo,
@@ -108,65 +35,18 @@ const createPhotoElement = (photoData) => {
  */
 const renderPhotos = (photoDataArray) => {
   const fragment = document.createDocumentFragment();
-  photoDataArray.forEach((value) => fragment.appendChild(createPhotoElement(value)));
+  photoDataArray.forEach((value) => fragment.appendChild(photo.create(value)));
 
   container.appendChild(fragment);
 };
 
-/**
- * Возвращает шаблон DOM-элемента для комментария comment
- *
- * @param {string} comment
- * @return {string}
- */
-const createCommentTemplate = (comment) =>
-  `<li class="social__comment social__comment--text">
-  <img class="social__picture" src="img/avatar-${util.getRandomNumber(1, 6)}.svg"
-  alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
-
-/**
- * Наполняет DOM-элемент `Фотография в полноэкранном режиме` данными объекта photoData
- *
- * @param {Photo} photoData
- */
-const fillBigPhoto = (photoData) => {
-  bigPhotoCommentsCount.classList.add(`visually-hidden`);
-  bigPhotoCommentsLoad.classList.add(`visually-hidden`);
-
-  bigPhotoImage.src = photoData.url;
-  bigPhotoCaption.textContent = photoData.description;
-  bigPhotoLikes.textContent = photoData.likes;
-
-  bigPhotoCommentsCount.classList.add(`visually-hidden`);
-  bigPhotoCommentsLoad.classList.add(`visually-hidden`);
-
-  util.removeChildren(bigPhotoCommentsBlock);
-
-  const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
-
-  bigPhotoCommentsBlock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
-};
-
+// Создает данные для фотогрфий
 const photos = data.init();
 
+// Отщбражает фотографии
 renderPhotos(photos);
 
 // Загрузка изображения и формы редактирования
-
-/**
- * Открывает форму редактирования фотографии,
- * добавляет обработчики событий
- *
- */
-const onUploadButtonClick = () => {
-  bodyElement.classList.add(`modal-open`);
-  editForm.classList.remove(`hidden`);
-  editFormClose.addEventListener(`click`, onEditFormCloseClick);
-  document.addEventListener(`keydown`, onEditFormEscPress);
-  activateResizePicture();
-  activateEffectsPicture();
-};
-
 /**
  * Закрывает форму редактирования фотографии,
  * удаляет обработчики событий с недоступных более элементов
@@ -188,15 +68,26 @@ const onEditFormCloseClick = () => {
  * @param {Event} evt
  */
 const onEditFormEscPress = (evt) => {
-  if (evt.keyCode === escKeyCode) {
-    onEditFormCloseClick();
-  }
+  util.runOnEscPress(evt, onEditFormCloseClick);
+};
+
+/**
+ * Открывает форму редактирования фотографии,
+ * добавляет обработчики событий
+ *
+ */
+const onUploadButtonClick = () => {
+  bodyElement.classList.add(`modal-open`);
+  editForm.classList.remove(`hidden`);
+  editFormClose.addEventListener(`click`, onEditFormCloseClick);
+  document.addEventListener(`keydown`, onEditFormEscPress);
+  activateResizePicture();
+  activateEffectsPicture();
 };
 
 uploadButton.addEventListener(`change`, onUploadButtonClick);
 
 // Масштабирование изображения
-
 /**
  * Записывает новый масштаб изображения size в поле resizeValue
  * м масштабирует изображение picturePreview на величину size

@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require(`copy-webpack-plugin`);
 
 module.exports = {
   entry: [
-    `./js/index.js`,
+    `./js/gallery.js`,
   ],
   output: {
     filename: `./js/bundle.js`

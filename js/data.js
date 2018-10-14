@@ -1,13 +1,13 @@
 import * as util from './util.js';
 
-const photoAmount = 25;
+const PHOTO_AMOUNT = 25;
 
 const LikesAmount = {
-  min: 15,
-  max: 200
+  MIN: 15,
+  MAX: 200
 };
 
-const comments = [
+const COMMENTS = [
   `Всё отлично!`,
   `В целом всё неплохо. Но не всё.`,
   `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
@@ -17,11 +17,11 @@ const comments = [
 ];
 
 const CommentsAmount = {
-  min: 1,
-  max: 2
+  MIN: 1,
+  MAX: 2
 };
 
-const descriptions = [
+const DESCRIPTIONS = [
   `Тестим новую камеру!`,
   `Затусили с друзьями на море`,
   `Как же круто тут кормят`,
@@ -46,7 +46,7 @@ const createUniqueURL = (amount) => {
   return () => `photos/${util.getRandomArrayElement(URLNames, true)}.jpg`;
 };
 
-const getURL = createUniqueURL(photoAmount);
+const getURL = createUniqueURL(PHOTO_AMOUNT);
 
 /**
  * Объект Photo, который описывает фотографию, размещенную пользователем
@@ -54,7 +54,7 @@ const getURL = createUniqueURL(photoAmount);
  * @type {Object}
  * @property {string} url Расположение фотографии
  * @property {number} likes Количество лайков, поставленных фотографии
- * @property {Array.<string>} comments Массив комментариев
+ * @property {Array.<string>} COMMENTS Массив комментариев
  * @property {string} description Описание фотографии
  */
 
@@ -65,9 +65,9 @@ const getURL = createUniqueURL(photoAmount);
  */
 const createPhotoData = () => ({
   url: getURL(),
-  likes: util.getRandomNumber(LikesAmount.min, LikesAmount.max),
-  comments: util.getRandomArray(CommentsAmount.min, CommentsAmount.max, comments),
-  description: util.getRandomArrayElement(descriptions)
+  likes: util.getRandomNumber(LikesAmount.MIN, LikesAmount.MAX),
+  comments: util.getRandomArray(CommentsAmount.MIN, CommentsAmount.MAX, COMMENTS),
+  description: util.getRandomArrayElement(DESCRIPTIONS)
 });
 
 /**
@@ -80,4 +80,4 @@ const createPhotoDataArray = (length) => new Array(length)
     .fill()
     .map(createPhotoData);
 
-export const init = () => createPhotoDataArray(photoAmount);
+export const init = () => createPhotoDataArray(PHOTO_AMOUNT);

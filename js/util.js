@@ -1,3 +1,5 @@
+const ESC_KEY_CODE = 27;
+
 /**
  * Возвращает целое случайное число из отрезка [min, max]
  *
@@ -55,5 +57,17 @@ export const getRandomArray = (min, max, initialArray) => {
 export const removeChildren = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
+  }
+};
+
+/**
+ * Вызывает переданную функцию action, если нажатая клавиша - Esc
+ *
+ * @param {Event} evt
+ * @param {function} action
+ */
+export const runOnEscPress = (evt, action) => {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    action();
   }
 };
