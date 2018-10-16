@@ -36,7 +36,7 @@ export /**
  * добавляет обработчики событий
  *
  */
-const open = () => {
+const initialize = () => {
   bodyElement.classList.add(`modal-open`);
   editPanel.classList.remove(`hidden`);
   editPanelClose.addEventListener(`click`, onEditPanelCloseClick);

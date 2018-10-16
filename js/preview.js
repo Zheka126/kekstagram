@@ -45,7 +45,7 @@ const createCommentTemplate = (comment) =>
 /**
  * Наполняет DOM-элемент `Фотография в полноэкранном режиме` данными объекта photoData
  *
- * @param {Photo} photoData
+ * @param {Object} photoData
  */
 const fillPreview = (photoData) => {
   previewCommentsCount.classList.add(`visually-hidden`);
@@ -60,7 +60,7 @@ const fillPreview = (photoData) => {
 
   util.removeChildren(previewCommentsBlock);
 
-  const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
+  const commentsBlockElements = photoData.userComments.map((value) => createCommentTemplate(value));
 
   previewCommentsBlock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 };
@@ -68,7 +68,7 @@ const fillPreview = (photoData) => {
 export /**
  * Открывает поп-ап с полноэкранной версией фотографии
  *
- * @param {Photo} photoData
+ * @param {Object} photoData
  */
 const open = (photoData) => {
   bodyElement.classList.add(`modal-open`);

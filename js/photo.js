@@ -5,10 +5,12 @@ const template = document.querySelector(`#picture`)
     .content
     .querySelector(`.picture__link`);
 
+const COMMENT_LENGTH_MAX = 140;
+
 export /**
- * Возвращает DOM-элемент `Фотография`, созданный на основе объекта Photo
+ * Возвращает DOM-элемент `Фотография`, созданный на основе объекта photoData
  *
- * @param {Photo} photoData
+ * @param {Object} photoData
  * @return {Node}
  */
 const create = (photoData) => {
@@ -17,13 +19,23 @@ const create = (photoData) => {
   const photoComments = photo.querySelector(`.picture__stat--comments`);
   const photoLikes = photo.querySelector(`.picture__stat--likes`);
 
-  photoSource.src = photoData.url;
-  photoComments.textContent = photoData.comments.length;
-  photoLikes.textContent = photoData.likes;
+  const {url, likes, comments} = photoData;
+
+  // Для корректного отображения разбивает слишком длинные комментарии,
+  // предоставленные сервером
+  const [description, ...userComments] = comments.reduce((acc, comment) =>
+    (comment.length > COMMENT_LENGTH_MAX ?
+      [...acc, ...comment.split(`. `)] :
+      [...acc, comment]),
+  []);
+
+  photoSource.src = url;
+  photoComments.textContent = userComments.length;
+  photoLikes.textContent = likes;
 
   // При нажатии на DOM-элемент `Фотография` открывается его полноэкранная версия
   photo.addEventListener(`click`, () => {
-    preview.open(photoData);
+    preview.open({url, likes, description, userComments});
   });
 
   return photo;

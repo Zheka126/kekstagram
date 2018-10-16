@@ -269,14 +269,14 @@ main {
   width: 20px;
   height: 16px;
 
-  background-position: 0 -53px;
+  background-position: 0 -70px;
 }
 
 .picture__stat--likes::before {
   width: 20px;
   height: 16px;
 
-  background-position: 0 -80px;
+  background-position: 0 -100px;
 }
 
 
@@ -958,6 +958,9 @@ main {
 
 .social__likes {
   margin-left: auto;
+
+  -ms-flex-negative: 0;
+    flex-shrink: 0;
 }
 
 .likes-count {
@@ -1252,4 +1255,52 @@ main {
     -ms-grid-row-span: 3;
     grid-row: 1 / span 3;
   }
+}
+
+.error-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+
+  width: 500px;
+  height: 300px;
+  padding: 150px 15px 15px;
+
+  -webkit-transform: translate(-50%, -50%);
+
+      -ms-transform: translate(-50%, -50%);
+
+          transform: translate(-50%, -50%);
+  
+  text-align: center;
+  font-size: 20px;
+  color: #ffe753;
+  background-color: #3c3614;
+
+  z-index: 5;
+}
+
+.error-popup::before {
+  content: "";
+  position: absolute;
+
+  width: 59px;
+  height: 52px;
+
+  top: 50px;
+  left: 50%;
+
+  background-image: url("../img/icon-warning.svg");
+
+  -webkit-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.error-popup__cancel {
+  position: absolute;
+  top: 0;
+  left: 100%;
+
+  margin-left: 10px;
 }

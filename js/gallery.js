@@ -1,6 +1,6 @@
-import * as data from './data.js';
 import * as photo from './photo.js';
 import * as editPanel from './edit-panel';
+import * as backend from './backend.js';
 
 // DOM-элемент, в котором размещаются фотографии пользователей
 const container = document.querySelector(`.pictures`);
@@ -11,11 +11,15 @@ const uploadForm = document.querySelector(`.img-upload__form`);
 // Кнопка загрузки изображения
 const uploadButton = uploadForm.querySelector(`#upload-file`);
 
+const errorPopup = document.querySelector(`.error-popup`);
+const errorPopupClose = errorPopup.querySelector(`.error-popup__cancel`);
+const errorPopupMessage = errorPopup.querySelector(`.error-popup__message`);
+
 /**
- * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов Photo,
+ * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов photoData,
  * на странице
  *
- * @param {Array.<Photo>} photoDataArray
+ * @param {Array.<Object>} photoDataArray
  */
 const renderPhotos = (photoDataArray) => {
   const fragment = document.createDocumentFragment();
@@ -25,18 +29,40 @@ const renderPhotos = (photoDataArray) => {
 };
 
 /**
+ * Закрывает поп-ап с сообщением об ошибке
+ *
+ */
+const onErrorPopupCloseClick = () => {
+  errorPopup.classList.add(`hidden`);
+  errorPopupClose.removeEventListener(`click`, onErrorPopupCloseClick);
+};
+
+/**
+ * Показывает поп-ап с сообщением об ошибке
+ *
+ * @param {string} message
+ */
+const showErrorPopup = (message) => {
+  if (errorPopup.classList.contains(`hidden`)) {
+    errorPopup.classList.remove(`hidden`);
+    errorPopupMessage.textContent = message;
+    setTimeout(onErrorPopupCloseClick, 5000);
+    errorPopupClose.addEventListener(`click`, onErrorPopupCloseClick);
+  }
+};
+
+/**
  * Инициализирует работу со страницей сайта
  *
  */
 const initialize = () => {
-  // Создает данные для фотографий
-  const photos = data.initialize();
+  // Загружает с сервера фотографии и отображает их.
+  // В случае ошибки загрузки данных показывает поп-ап с описанием ошибки
+  backend.load(renderPhotos, showErrorPopup);
 
-  // Отображает фотографии
-  renderPhotos(photos);
-
-  // Загрузка изображения и панели редактирования
-  uploadButton.addEventListener(`change`, editPanel.open);
+  // Открывает панель редактирования фотографии при
+  // нажатии на кнопку uploadButton
+  uploadButton.addEventListener(`change`, editPanel.initialize);
 };
 
 initialize();
