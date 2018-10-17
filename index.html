@@ -42,7 +42,8 @@
             <div class="img-upload__message img-upload__message--dragndrop hidden">Сюда!</div>
             <div class="img-upload__message img-upload__message--loading hidden">Загружаем...</div>
             <div class="img-upload__message img-upload__message--processing hidden">Кексограмим...</div>
-            <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
+            <div class="img-upload__message img-upload__message--error error hidden">
+              <div class="error__message">Ошибка загрузки файла</div>
               <div class="error__links">
                 <a class="error__link" href="#">Попробовать снова</a>
                 <a class="error__link" href="#">Загрузить другой файл</a>
@@ -123,7 +124,7 @@
 
                 <fieldset class="img-upload__text text">
                   <input class="text__hashtags" name="hashtags" placeholder="#хэш-тег">
-                  <textarea class="text__description" name="description" placeholder="Ваш комментарий..."></textarea>
+                  <textarea class="text__description" name="description" placeholder="Ваш комментарий..." maxlength="140"></textarea>
                 </fieldset>
 
                 <button type="submit" class="img-upload__submit" id="upload-submit">Опубликовать</button>

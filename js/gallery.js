@@ -1,5 +1,5 @@
 import * as photo from './photo.js';
-import * as editPanel from './edit-panel';
+import * as form from './form.js';
 import * as backend from './backend.js';
 
 // DOM-элемент, в котором размещаются фотографии пользователей
@@ -62,7 +62,7 @@ const initialize = () => {
 
   // Открывает панель редактирования фотографии при
   // нажатии на кнопку uploadButton
-  uploadButton.addEventListener(`change`, editPanel.initialize);
+  uploadButton.addEventListener(`change`, form.initialize);
 };
 
 initialize();

@@ -7,7 +7,7 @@ const ErrorStatus = {
   400: `Неверный запрос`,
   401: `Пользователь не авторизован`,
   404: `Ничего на найдено`,
-  500: `Ошибка сервера`
+  500: `Внутренняя ошибка сервера`
 };
 
 /**
@@ -26,7 +26,7 @@ const createRequest = (onSuccess, onError) => {
     if (xhr.status === SUCCESS_STATUS) {
       onSuccess(xhr.response);
     } else {
-      onError(`Ошибка ${xhr.status}: ${ErrorStatus[xhr.status]}`);
+      onError(`${xhr.status}: ${ErrorStatus[xhr.status]}`);
     }
   });
 

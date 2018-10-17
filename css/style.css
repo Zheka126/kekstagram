@@ -1304,3 +1304,7 @@ main {
 
   margin-left: 10px;
 }
+
+.error__message {
+  text-transform: uppercase;
+}
