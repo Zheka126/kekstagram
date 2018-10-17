@@ -36,7 +36,7 @@ export /**
  * @param {number} value Значение от 0 до 100
  */
 const setPinPosition = (value) => {
-  effectLevel.value = value;
+  effectLevel.value = Math.round(value);
   scalePin.style.left = `${value}%`;
   scaleLevel.style.width = `${value}%`;
 };
