@@ -55,12 +55,9 @@ const fillPreview = (photoData) => {
   previewCaption.textContent = photoData.description;
   previewLikes.textContent = photoData.likes;
 
-  previewCommentsCount.classList.add(`visually-hidden`);
-  previewCommentsLoad.classList.add(`visually-hidden`);
-
   util.removeChildren(previewCommentsBlock);
 
-  const commentsBlockElements = photoData.userComments.map((value) => createCommentTemplate(value));
+  const commentsBlockElements = photoData.comments.map((value) => createCommentTemplate(value));
 
   previewCommentsBlock.insertAdjacentHTML(`afterbegin`, commentsBlockElements.join(``));
 };
