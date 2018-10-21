@@ -27,6 +27,11 @@ const createCommentTemplate = (comment) =>
   <img class="social__picture" src="img/avatar-${util.getRandomNumber(1, 6)}.svg"
   alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
 
+/**
+ * Показывает количество загруженных комментариев
+ *
+ * @param {number} count
+ */
 const showCommentsLoadedCount = (count) => {
   commentsLoaded.textContent = count;
 };
@@ -48,7 +53,7 @@ const renderComments = (commentsArray) => {
 /**
  * Если оставшихся для отображения комментариев меньше COMMENTS_STEP,
  * то скрывает кнопку подгрузки новых комментариев.
- * Отображает не более COMMENTS_STEP комментариев.
+ * Отображает не более COMMENTS_STEP комментариев
  *
  */
 const onCommentsLoadMoreButtonClick = () => {
@@ -59,7 +64,7 @@ const onCommentsLoadMoreButtonClick = () => {
 };
 
 /**
- * Выаолняет функцию onCommentsLoadMoreButtonClick при нажатии на ENTER
+ * Выполняет функцию onCommentsLoadMoreButtonClick при нажатии на ENTER
  *
  * @param {Event} evt
  */
@@ -125,7 +130,7 @@ const fillPreview = (photoData) => {
   showCommentsCountBlock();
 
   // В зависимости от количества комментариев показывает
-  // или скрывает блок зарузки новых комментариев
+  // или скрывает блок загрузки новых комментариев
   if (photoData.comments.length <= COMMENTS_STEP) {
     hideCommentsLoadMoreButton();
   } else {
