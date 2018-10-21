@@ -1,4 +1,5 @@
 const ESC_KEY_CODE = 27;
+const ENTER_KEY_CODE = 13;
 
 export /**
  * Возвращает целое случайное число из отрезка [min, max]
@@ -71,6 +72,18 @@ export /**
  */
 const runOnEscPress = (evt, action) => {
   if (evt.keyCode === ESC_KEY_CODE) {
+    action();
+  }
+};
+
+export /**
+ * Вызывает переданную функцию action, если нажатая клавиша - Enter
+ *
+ * @param {Event} evt
+ * @param {function} action
+ */
+const runOnEnterPress = (evt, action) => {
+  if (evt.keyCode === ENTER_KEY_CODE) {
     action();
   }
 };
