@@ -28,7 +28,7 @@
   "dependencies": {},
   "scripts": {
     "test": "eslint js/",
-    "build": "babel js --out-dir dist/js --source-maps inline",
+    "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
     "start": "webpack-dev-server --mode development --open"
