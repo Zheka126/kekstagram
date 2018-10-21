@@ -1,6 +1,7 @@
 import * as photo from './photo.js';
 import * as form from './form.js';
 import * as backend from './backend.js';
+import * as filter from './filter.js';
 
 // DOM-элемент, в котором размещаются фотографии пользователей
 const container = document.querySelector(`.pictures`);
@@ -16,9 +17,11 @@ const errorPopup = document.querySelector(`.error-popup`);
 const errorPopupClose = errorPopup.querySelector(`.error-popup__cancel`);
 const errorPopupMessage = errorPopup.querySelector(`.error-popup__message`);
 
+const POPAP_ERROR_INTERVAL = 5000;
 const COMMENT_LENGTH_MAX = 140;
 
 let photos = [];
+let photoElements = [];
 
 /**
  * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов photoData,
@@ -28,9 +31,28 @@ let photos = [];
  */
 const renderPhotos = (photoDataArray) => {
   const fragment = document.createDocumentFragment();
-  photoDataArray.forEach((value) => fragment.appendChild(photo.create(value)));
+  photoElements = photoDataArray.map((value) => photo.create(value));
+  photoElements.forEach((value) => fragment.appendChild(value));
 
   container.appendChild(fragment);
+};
+
+/**
+ * Удаляет DOM-элементы `Фотография` photoElements
+ *
+ */
+const removePhotos = () => {
+  photoElements.forEach((it) => container.removeChild(it));
+};
+
+export /**
+ * Обновляет DOM-элементы `Фотография` после фильтрации
+ *
+ * @param {Array.<Object>} photoDataArray
+ */
+const updatePhotos = (photoDataArray) => {
+  removePhotos();
+  renderPhotos(photoDataArray);
 };
 
 /**
@@ -54,13 +76,15 @@ const formatData = (photoData) => {
 };
 
 /**
- * Форматирует полученные данные и отображает их
+ * Форматирует полученные данные и отображает их,
+ * инициализирует работу фильтрации
  *
  * @param {Array.<Object>} data Загруженные с сервера данные
  */
 const onSuccess = (data) => {
   photos = data.map((it) => formatData(it));
   renderPhotos(photos);
+  filter.initialize(photos);
 };
 
 /**
@@ -81,7 +105,7 @@ const onError = (message) => {
   if (errorPopup.classList.contains(`hidden`)) {
     errorPopup.classList.remove(`hidden`);
     errorPopupMessage.textContent = message;
-    setTimeout(onErrorPopupCloseClick, 5000);
+    setTimeout(onErrorPopupCloseClick, POPAP_ERROR_INTERVAL);
     errorPopupClose.addEventListener(`click`, onErrorPopupCloseClick);
   }
 };

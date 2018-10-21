@@ -20,20 +20,23 @@ export /**
 const getRandomArrayElement = (initialArray, needRemove = false) => {
   const randomElementIndex = getRandomNumber(0, initialArray.length - 1);
   const randomElement = initialArray[randomElementIndex];
+  if (needRemove) {
+    initialArray.splice(randomElementIndex, 1);
+  }
 
-  return needRemove ? initialArray.splice(randomElementIndex, 1) : randomElement;
+  return randomElement;
 };
 
 export /**
  * Возвращает массив случайной длины из отрезка [min, max], составленный
  * из уникальных случайных элементов массива initialArray
  *
- * @param {number} min Минимальная возможная длина возвращаемого массива
- * @param {number} max Максимальная возможная длина возвращаемого массива
  * @param {Array} initialArray Массив, из элементов которого формируется новый массив
+ * @param {number} min Минимальная возможная длина возвращаемого массива (по умолчанию = 1)
+ * @param {number} max Максимальная возможная длина возвращаемого массива (по умолчанию = длине массива initialArray)
  * @return {Array}
  */
-const getRandomArray = (min, max, initialArray) => {
+const getRandomArray = (initialArray, min = 1, max = initialArray.length) => {
   const copiedArray = initialArray.slice();
   const length = getRandomNumber(min, max);
 
@@ -70,4 +73,21 @@ const runOnEscPress = (evt, action) => {
   if (evt.keyCode === ESC_KEY_CODE) {
     action();
   }
+};
+
+let lastTimeout;
+
+export /**
+ * Откладывает выполнение функции cb на время debounceInterval
+ * и предотвращает 'дребезг' при повтороном обращении к фукнции cb раньше,
+ * чем через время debounceInterval
+ *
+ * @param {function} cb Выполняемая функция
+ * @param {number} debounceInterval Время в мс
+ */
+const debounce = (cb, debounceInterval) => {
+  if (lastTimeout) {
+    window.clearTimeout(lastTimeout);
+  }
+  lastTimeout = window.setTimeout(cb, debounceInterval);
 };
