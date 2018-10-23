@@ -54,6 +54,17 @@ const getRandomArray = (initialArray, min = 1, max = initialArray.length) => {
 };
 
 export /**
+ * Возвращает массив, равный массиву initialArray,
+ * с иключенными элементами element
+ *
+ * @param {Array} initialArray
+ * @param {*} deletedElement
+ * @return {Array}
+ */
+const getArrayWithoutElement = (initialArray, deletedElement) =>
+  initialArray.reduce((acc, value) => value === deletedElement ? acc : [...acc, value], []);
+
+export /**
  * Удаляет дочерние DOM-элементы у элемента parent
  *
  * @param {Node} parent
