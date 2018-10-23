@@ -2,14 +2,19 @@ import * as util from './util.js';
 import * as resize from './resize.js';
 import * as effects from './effects.js';
 import * as backend from './backend.js';
+import * as validation from './form-validation';
 
 const bodyElement = document.querySelector(`body`);
 const uploadButton = document.querySelector(`#upload-file`);
 const uploadForm = document.querySelector(`.img-upload__form`);
-const uploadErrorBLock = uploadForm.querySelector(`.img-upload__message--error`);
-const uploadErrorMessage = uploadErrorBLock.querySelector(`.error__message`);
+const hashTagsField = uploadForm.querySelector(`.text__hashtags`);
+const commentField = uploadForm.querySelector(`.text__description`);
+
 const editPanel = document.querySelector(`.img-upload__overlay`);
 const editPanelClose = editPanel.querySelector(`#upload-cancel`);
+
+const uploadErrorBLock = uploadForm.querySelector(`.img-upload__message--error`);
+const uploadErrorMessage = uploadErrorBLock.querySelector(`.error__message`);
 
 /**
  * При успешной отправке формы очищает ее поля
@@ -50,6 +55,7 @@ const onUploadFormSubmit = (evt) => {
  *
  */
 const onEditPanelCloseClick = () => {
+  uploadForm.reset();
   uploadButton.value = ``;
   bodyElement.classList.remove(`modal-open`);
   editPanel.classList.add(`hidden`);
@@ -65,7 +71,9 @@ const onEditPanelCloseClick = () => {
  * @param {Event} evt
  */
 const onEditPanelEscPress = (evt) => {
-  util.runOnEscPress(evt, onEditPanelCloseClick);
+  if (evt.target !== hashTagsField && evt.target !== commentField) {
+    util.runOnEscPress(evt, onEditPanelCloseClick);
+  }
 };
 
 export /**
@@ -78,8 +86,8 @@ const initialize = () => {
   editPanel.classList.remove(`hidden`);
   editPanelClose.addEventListener(`click`, onEditPanelCloseClick);
   document.addEventListener(`keydown`, onEditPanelEscPress);
+  validation.initialize();
   uploadForm.addEventListener(`submit`, onUploadFormSubmit);
   resize.initialize();
   effects.initialize();
 };
-
