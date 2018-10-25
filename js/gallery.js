@@ -119,8 +119,8 @@ const initialize = () => {
   // В случае ошибки загрузки данных показывает поп-ап с описанием ошибки
   backend.load(onSuccess, onError);
 
-  // Открывает панель редактирования фотографии при
-  // нажатии на кнопку uploadButton
+  // Инициирует работу с загруженной фотографией
+  // при нажатии на кнопку uploadButton
   uploadButton.addEventListener(`change`, form.initialize);
 };
 

@@ -3,6 +3,7 @@ import * as resize from './resize.js';
 import * as effects from './effects.js';
 import * as backend from './backend.js';
 import * as validation from './form-validation';
+import uploadFile from './upload-file.js';
 
 const bodyElement = document.querySelector(`body`);
 const uploadButton = document.querySelector(`#upload-file`);
@@ -15,6 +16,11 @@ const editPanelClose = editPanel.querySelector(`#upload-cancel`);
 
 const uploadErrorBLock = uploadForm.querySelector(`.img-upload__message--error`);
 const uploadErrorMessage = uploadErrorBLock.querySelector(`.error__message`);
+
+const uploadedPicture = editPanel.querySelector(`.img-upload__preview > img`);
+const effectsPreviews = editPanel.querySelectorAll(`.effects__preview`);
+
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
 /**
  * При успешной отправке формы очищает ее поля
@@ -51,18 +57,19 @@ const onUploadFormSubmit = (evt) => {
 
 /**
  * Закрывает панель редактирования фотографии,
+ * восстанавливает стандартные значения всем элементам формы,
  * удаляет обработчики событий с недоступных более элементов
  *
  */
 const onEditPanelCloseClick = () => {
   uploadForm.reset();
   uploadButton.value = ``;
+  resize.finalize();
+  effects.finalize();
   bodyElement.classList.remove(`modal-open`);
   editPanel.classList.add(`hidden`);
   editPanelClose.removeEventListener(`click`, onEditPanelCloseClick);
   document.removeEventListener(`keydown`, onEditPanelEscPress);
-  resize.finalize();
-  effects.finalize();
 };
 
 /**
@@ -76,18 +83,41 @@ const onEditPanelEscPress = (evt) => {
   }
 };
 
-export /**
- * Открывает панель редактирования фотографии,
- * добавляет обработчики событий
+/**
+ * Показывает панель редактирования фотографии,
+ * добавляет обработчики событий,
+ * инициирует валидацию, масштабиование
+ * и применение эффектов
  *
  */
-const initialize = () => {
+const openUploadForm = () => {
+  validation.initialize();
+  resize.initialize();
+  effects.initialize();
   bodyElement.classList.add(`modal-open`);
   editPanel.classList.remove(`hidden`);
   editPanelClose.addEventListener(`click`, onEditPanelCloseClick);
   document.addEventListener(`keydown`, onEditPanelEscPress);
-  validation.initialize();
   uploadForm.addEventListener(`submit`, onUploadFormSubmit);
-  resize.initialize();
-  effects.initialize();
+};
+
+export /**
+ * Инициирует работу с загруженной фотографией
+ *
+ * @param {Event} evt
+ */
+const initialize = (evt) => {
+  const file = evt.target.files[0];
+
+  // Результат чтения загруженной фотографии помещает в атрибут
+  // src элемента uploadedPicture и в качестве фонового изображения
+  // для превью эффектов
+  uploadFile(file, FILE_TYPES, (readingResult) => {
+    uploadedPicture.src = readingResult;
+    Array.from(effectsPreviews).forEach((effect) => {
+      effect.style.backgroundImage = `url(${readingResult})`;
+    });
+  });
+
+  openUploadForm();
 };

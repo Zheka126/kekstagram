@@ -13,8 +13,6 @@ const PictureSize = {
 
 let currentPictureSize = 100;
 
-
-// Масштабирование изображения
 /**
  * Записывает новый масштаб изображения size в поле resizeValue
  * м масштабирует изображение picturePreview на величину size
