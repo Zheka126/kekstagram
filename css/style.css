@@ -616,6 +616,7 @@ main {
 
 .img-upload__preview img {
   display: block;
+  height: auto;
 }
 
 
