@@ -402,7 +402,7 @@ main {
   border: 5px dashed #ffe753;
 }
 
-.img-upload__message--loading::before {
+.img-upload__bar {
   content: "";
   position: absolute;
   bottom: 40%;
@@ -413,30 +413,63 @@ main {
 
   background-color: #8a7d2d;
 
+  overflow: hidden;
+
   -webkit-transform: translateX(-50%);
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
 }
 
-.img-upload__message--loading::after {
+@-webkit-keyframes move {
+  0% {
+    left: 0;
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+  100% {
+    left: 100%;
+    -webkit-transform: translateX(0%);
+            transform: translateX(0%);
+  }
+}
+
+@keyframes move {
+  0% {
+    left: 0;
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+  100% {
+    left: 100%;
+    -webkit-transform: translateX(0%);
+            transform: translateX(0%);
+  }
+}
+
+.img-upload__bar::after {
   content: "";
   position: absolute;
-  bottom: 40%;
-  left: 50%;
 
   width: 200px;
   height: 10px;
 
   background-color: #ffe753;
 
-  -webkit-transform: translateX(-50%);
-      -ms-transform: translateX(-50%);
-          transform: translateX(-50%);
+  -webkit-animation-name: move;
+
+          animation-name: move;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
 }
 
 .img-upload__message--processing::before {
   content: "";
   position: absolute;
+  transform: translateX(-100%);
 
   width: 45px;
   height: 45px;

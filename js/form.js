@@ -19,6 +19,7 @@ const uploadErrorMessage = uploadErrorBLock.querySelector(`.error__message`);
 
 const uploadedPicture = editPanel.querySelector(`.img-upload__preview > img`);
 const effectsPreviews = editPanel.querySelectorAll(`.effects__preview`);
+const uploadMessage = uploadForm.querySelector(`.img-upload__message--loading`);
 
 const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
@@ -107,6 +108,7 @@ export /**
  * @param {Event} evt
  */
 const initialize = (evt) => {
+  uploadMessage.classList.remove(`hidden`);
   const file = evt.target.files[0];
 
   // Результат чтения загруженной фотографии помещает в атрибут
@@ -117,7 +119,8 @@ const initialize = (evt) => {
     Array.from(effectsPreviews).forEach((effect) => {
       effect.style.backgroundImage = `url(${readingResult})`;
     });
-  });
 
-  openUploadForm();
+    openUploadForm();
+    uploadMessage.classList.add(`hidden`);
+  });
 };
