@@ -1,4 +1,4 @@
-import * as photo from './photo.js';
+import Photo from './photo.js';
 import * as form from './form.js';
 import * as backend from './backend.js';
 import * as filter from './filter.js';
@@ -31,8 +31,8 @@ let photoElements = [];
  */
 const renderPhotos = (photoDataArray) => {
   const fragment = document.createDocumentFragment();
-  photoElements = photoDataArray.map((value) => photo.create(value));
-  photoElements.forEach((value) => fragment.appendChild(value));
+  photoElements = photoDataArray.map((value) => new Photo(value));
+  photoElements.forEach((photo) => fragment.appendChild(photo.create()));
 
   container.appendChild(fragment);
 };

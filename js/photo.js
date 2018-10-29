@@ -5,28 +5,41 @@ const template = document.querySelector(`#picture`)
     .content
     .querySelector(`.picture__link`);
 
-export /**
- * Возвращает DOM-элемент `Фотография`, созданный на основе объекта photoData
+export default /**
+ * Формирует объект типа `Фотография` и метод для создания
+ * DOM-элемент `Фотография`
  *
- * @param {Object} photoData
- * @return {Node}
+ * @class Photo
  */
-const create = (photoData) => {
-  const photo = template.cloneNode(true);
-  const photoSource = photo.querySelector(`.picture__img`);
-  const photoComments = photo.querySelector(`.picture__stat--comments`);
-  const photoLikes = photo.querySelector(`.picture__stat--likes`);
+class Photo {
+  constructor({url, likes, comments, description}) {
+    this.url = url;
+    this.likes = likes;
+    this.comments = comments;
+    this.description = description;
+  }
 
-  const {url, likes, comments} = photoData;
+  /**
+   * Возвращает DOM-элемент `Фотография`
+   *
+   * @memberof Photo
+   * @return {Node}
+   */
+  create() {
+    const photo = template.cloneNode(true);
+    const photoSource = photo.querySelector(`.picture__img`);
+    const photoComments = photo.querySelector(`.picture__stat--comments`);
+    const photoLikes = photo.querySelector(`.picture__stat--likes`);
 
-  photoSource.src = url;
-  photoComments.textContent = comments.length;
-  photoLikes.textContent = likes;
+    photoSource.src = this.url;
+    photoComments.textContent = this.comments.length;
+    photoLikes.textContent = this.likes;
 
-  // При нажатии на DOM-элемент `Фотография` открывается его полноэкранная версия
-  photo.addEventListener(`click`, () => {
-    preview.open(photoData);
-  });
+    // При нажатии на DOM-элемент `Фотография` открывается его полноэкранная версия
+    photo.addEventListener(`click`, () => {
+      preview.open(this);
+    });
 
-  return photo;
-};
+    return photo;
+  }
+}
