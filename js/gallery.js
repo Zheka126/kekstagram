@@ -24,15 +24,15 @@ let photos = [];
 let photoElements = [];
 
 /**
- * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов photoData,
+ * Отображает DOM-элементы `Фотография`, созданный на основе массива объектов Photo,
  * на странице
  *
- * @param {Array.<Object>} photoDataArray
+ * @param {Array.<Photo>} photoArray
  */
-const renderPhotos = (photoDataArray) => {
+const renderPhotos = (photoArray) => {
   const fragment = document.createDocumentFragment();
-  photoElements = photoDataArray.map((value) => new Photo(value));
-  photoElements.forEach((photo) => fragment.appendChild(photo.create()));
+  photoElements = photoArray.map((photo) => photo.create());
+  photoElements.forEach((photoNode) => fragment.appendChild(photoNode));
 
   container.appendChild(fragment);
 };
@@ -48,11 +48,11 @@ const removePhotos = () => {
 export /**
  * Обновляет DOM-элементы `Фотография` после фильтрации
  *
- * @param {Array.<Object>} photoDataArray
+ * @param {Array.<Photo>} photoArray
  */
-const updatePhotos = (photoDataArray) => {
+const updatePhotos = (photoArray) => {
   removePhotos();
-  renderPhotos(photoDataArray);
+  renderPhotos(photoArray);
 };
 
 /**
@@ -82,7 +82,9 @@ const formatData = (photoData) => {
  * @param {Array.<Object>} data Загруженные с сервера данные
  */
 const onSuccess = (data) => {
-  photos = data.map((it) => formatData(it));
+  photos = data
+      .map((it) => formatData(it))
+      .map((it) => new Photo(it));
   renderPhotos(photos);
   filter.initialize(photos);
 };

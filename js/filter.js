@@ -33,8 +33,8 @@ const identity = (value) => value;
  * Возвращает массив фотографий, отсортированный
  * по количеству лайков
  *
- * @param {Array<Object>} photos
- * @return {Array<Object>}
+ * @param {Array.<Photo>} photos
+ * @return {Array.<Photo>}
  */
 const sortByLikes = (photos) =>
   photos.slice().sort((x, y) => y.likes - x.likes);
@@ -43,8 +43,8 @@ const sortByLikes = (photos) =>
  * Возвращает массив фотографий, отсортированный
  * по количеству комментариев
  *
- * @param {Array<Object>} photos
- * @return {Array<Object>}
+ * @param {Array.<Photo>} photos
+ * @return {Array.<Photo>}
  */
 const sortByComments = (photos) =>
   photos.slice().sort((x, y) => y.comments.length - x.comments.length);
@@ -63,7 +63,7 @@ export /**
  * для обновления DOM-элементов `Фотография` с предотвравщением дребезга
  *
  * @param {Event} evt
- * @param {Array<Object>} photos
+ * @param {Array.<Photo>} photos
  */
 const filterPhotos = (evt, photos) => {
   const appliedFilter = evt.target;
@@ -80,7 +80,7 @@ export /**
  * Показывает блок с фильтрами,
  * устанавливает обработчики событий на переключатели фильтров
  *
- * @param {Array<Object>} photos
+ * @param {Array.<Photo>} photos
  */
 const initialize = (photos) => {
   filtersContainer.classList.remove(`img-filters--inactive`);
