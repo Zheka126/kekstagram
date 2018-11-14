@@ -24,8 +24,8 @@ let commentsCounter = 0;
  */
 const createCommentTemplate = (comment) =>
   `<li class="social__comment social__comment--text">
-  <img class="social__picture" src="img/avatar-${util.getRandomNumber(1, 6)}.svg"
-  alt="Аватар комментатора фотографии" width="35" height="35">${comment}</li>`;
+  <img class="social__picture" src="${comment.avatar}"
+  alt="Аватар комментатора фотографии" width="35" height="35">${comment.message}</li>`;
 
 /**
  * Показывает количество загруженных комментариев
@@ -44,7 +44,8 @@ const showCommentsLoadedCount = (count) => {
  * @param {Array<String>} commentsArray
  */
 const renderComments = (commentsArray) => {
-  const commentsBlockElements = commentsArray.map((comment) => createCommentTemplate(comment));
+  const commentsBlockElements = commentsArray
+      .map((comment) => createCommentTemplate(comment));
   previewCommentsBlock.insertAdjacentHTML(`beforeend`, commentsBlockElements.join(``));
   commentsCounter += commentsArray.length;
   showCommentsLoadedCount(commentsCounter);

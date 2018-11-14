@@ -18,7 +18,6 @@ const errorPopupClose = errorPopup.querySelector(`.error-popup__cancel`);
 const errorPopupMessage = errorPopup.querySelector(`.error-popup__message`);
 
 const POPAP_ERROR_INTERVAL = 5000;
-const COMMENT_LENGTH_MAX = 140;
 
 let photos = [];
 let photoElements = [];
@@ -56,26 +55,6 @@ const updatePhotos = (photoArray) => {
 };
 
 /**
- * Для корректного отображения разбивает слишком длинные комментарии,
- * предоставленные сервером, на комментарии длины не более COMMENT_LENGTH_MAX
- * и возвращает новый объект photoData
- *
- * @param {Object} photoData Объект до форматирования
- * @return {Object} Объект после форматирования
- */
-const formatData = (photoData) => {
-  const comments = photoData.comments.reduce((acc, comment) =>
-    (comment.length > COMMENT_LENGTH_MAX ?
-      [...acc, ...comment.split(`. `)] :
-      [...acc, comment]),
-  []);
-
-  const {url, likes, description} = photoData;
-
-  return ({url, likes, comments, description});
-};
-
-/**
  * Форматирует полученные данные и отображает их,
  * инициализирует работу фильтрации
  *
@@ -83,7 +62,6 @@ const formatData = (photoData) => {
  */
 const onSuccess = (data) => {
   photos = data
-      .map((it) => formatData(it))
       .map((it) => new Photo(it));
   renderPhotos(photos);
   filter.initialize(photos);
