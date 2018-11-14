@@ -1057,21 +1057,23 @@ main {
 .social__comment-count,
 .social__comment-loadmore {
   padding-left: 65px;
-  padding-bottom: 20px;
 }
 
 .social__comment-count {
   padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .social__comment-loadmore {
   position: relative;
+  padding-top: 10px;
+  padding-bottom: 10px;
   color: #3b77c0;
 
   cursor: pointer;
 }
 
-.social__comment-loadmore::after {
+.social__comment-loadmore:active::after {
   content: "";
   position: absolute;
   left: 180px;
@@ -1081,6 +1083,29 @@ main {
   height: 23px;
 
   background-image: url("../img/spinner-blue.svg");
+  -webkit-animation: spinner 1s infinite linear;
+          animation: spinner 1s infinite linear;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
 }
 
 .social__comment--text {
